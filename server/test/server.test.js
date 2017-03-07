@@ -111,7 +111,15 @@ describe('DELETE /todos/:id' ,() => {
       .expect((res) => {
           expect(res.body.todo.text).toBe(todos[1].text);
       })
-      .end(done);
+      .end((err,res) => {
+        if(err) {
+          return done(err);
+        }
+        Todo.findById(todos[1]._id.toHexString()).then((todo) => {
+          expect(todo).toNotExist();
+          done();
+        }).catch((e) => done(e));
+      });
   })
 
   it('Should return a 404 when doc not found', (done) => {
